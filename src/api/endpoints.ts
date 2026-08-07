@@ -1,0 +1,23 @@
+export const ENDPOINTS = {
+  AUTH: {
+    LOGIN: "/auth/login",
+    ME: "/auth/me",
+  },
+
+  USERS: {
+    LIST: "/users",
+    DETAIL: (id: number) => `/users/${id}`,
+    SEARCH: "/users/search",
+    CREATE: "/users/add",
+    UPDATE: (id: number) => `/users/${id}`,
+    DELETE: (id: number) => `/users/${id}`,
+  },
+
+  WORK_ITEMS: {
+    LIST: "/todos",
+    DETAIL: (id: number) => `/todos/${id}`,
+    CREATE: "/todos/add",
+    UPDATE: (id: number) => `/todos/${id}`,
+    DELETE: (id: number) => `/todos/${id}`,
+  },
+} as const;
