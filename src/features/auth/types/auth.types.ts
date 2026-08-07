@@ -1,7 +1,7 @@
 export type UserRole =
   | "admin"
-  | "manager"
-  | "contributor";
+  | "moderator"
+  | "user";
 
 export type AuthStatus =
   | "authenticated"

@@ -31,15 +31,22 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate replace to={ROUTES.DASHBOARD} />,
+            element: (
+              <Navigate
+                to={ROUTES.DASHBOARD}
+                replace
+              />
+            ),
           },
 
           ...protectedRoutes.map((route) => ({
             path: route.path,
-            element: (
+            element: route.permissions ? (
               <PermissionGuard permissions={route.permissions}>
                 <route.component />
               </PermissionGuard>
+            ) : (
+              <route.component />
             ),
           })),
         ],

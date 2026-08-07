@@ -18,6 +18,8 @@ export function useLogin() {
       authService.login(payload),
 
     onSuccess: (response) => {
+        console.log("Service Response:", response);
+        console.log("Mapped User:", response.user);
       login({
         accessToken: response.accessToken,
         user: response.user,
