@@ -18,7 +18,10 @@ export function useLogin() {
       authService.login(payload),
 
     onSuccess: (response) => {
-      login(response.accessToken, response.user);
+      login({
+        accessToken: response.accessToken,
+        user: response.user,
+      });
 
       toast.success("Login successful");
 

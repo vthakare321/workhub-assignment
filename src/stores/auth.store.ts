@@ -3,12 +3,18 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 import type { AuthUser } from "@/features/auth/models/auth-user.model";
 
+interface LoginPayload {
+  accessToken: string;
+  user: AuthUser;
+}
+
+
 interface AuthState {
   accessToken: string | null;
   user: AuthUser | null;
   isAuthenticated: boolean;
 
-  login: (token: string, user: AuthUser) => void;
+  login: (payload: LoginPayload) => void;
   logout: () => void;
 }
 
@@ -19,9 +25,9 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
 
-      login: (token, user) =>
+      login: ({ accessToken, user }) =>
         set({
-          accessToken: token,
+          accessToken,
           user,
           isAuthenticated: true,
         }),
