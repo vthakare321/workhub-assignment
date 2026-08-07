@@ -1,2 +1,6 @@
 export { default } from "./Loader";
-export type { LoaderProps } from "./Loader.types";
+
+export type {
+  LoaderProps,
+  LoaderSize,
+} from "./Loader.types";

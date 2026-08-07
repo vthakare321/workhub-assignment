@@ -7,10 +7,15 @@ import "@/index.css";
 
 import { QueryProvider } from "@/providers/QueryProvider";
 
+import { Toaster } from "react-hot-toast";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryProvider>
       <App />
+      <Toaster
+        position="top-right" reverseOrder={false}/>
     </QueryProvider>
   </React.StrictMode>
 );
+    

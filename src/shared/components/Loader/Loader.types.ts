@@ -1,4 +1,9 @@
+export type LoaderSize =
+  | "sm"
+  | "md"
+  | "lg";
+
 export interface LoaderProps {
   fullScreen?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: LoaderSize;
 }

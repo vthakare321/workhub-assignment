@@ -1,7 +1,7 @@
-import { PERMISSIONS } from "./permissions";
-import { ROLES } from "./roles";
+import { PERMISSIONS, type Permission } from "./permissions";
+import { ROLES, type Role } from "./roles";
 
-export const ROLE_PERMISSIONS = {
+export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [ROLES.ADMIN]: [
     PERMISSIONS.DASHBOARD.READ,
 
@@ -45,4 +45,4 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.PROFILE.READ,
     PERMISSIONS.PROFILE.UPDATE,
   ],
-} as const;
+};
