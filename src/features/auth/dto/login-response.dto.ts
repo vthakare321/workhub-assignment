@@ -1,15 +1,17 @@
 import type { UserRole } from "../types/auth.types";
 
-export interface AuthUser {
+export interface LoginResponseDto {
   id: number;
-
   username: string;
-
   email: string;
 
-  fullName: string;
+  firstName: string;
+  lastName: string;
 
   image: string;
 
   role: UserRole;
+
+  accessToken: string;
+  refreshToken: string;
 }
