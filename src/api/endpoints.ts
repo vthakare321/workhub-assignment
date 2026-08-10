@@ -8,6 +8,7 @@ export const ENDPOINTS = {
     LIST: "/users",
     DETAIL: (id: number) => `/users/${id}`,
     SEARCH: "/users/search",
+    FILTER: "/users/filter",
     CREATE: "/users/add",
     UPDATE: (id: number) => `/users/${id}`,
     DELETE: (id: number) => `/users/${id}`,

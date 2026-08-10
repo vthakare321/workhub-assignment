@@ -8,17 +8,37 @@ import type { UpdateUserRequestDto } from "../dto/update-user-request.dto";
 import type { UserListParams } from "../types/user-list-params";
 
 export const usersService = {
-  async getUsers(params: UserListParams) {
-    const { data } = await usersApi.getUsers(params);
+ async getUsers(params: UserListParams) {
+  const hasSearch = params.q.trim() !== "";
+  const hasRoleFilter = params.role !== "all";
 
-    return {
-      users: data.users.map(toUser),
-      total: data.total,
-      skip: data.skip,
-      limit: data.limit,
-    };
-  },
+  const response = hasSearch
+    ? await usersApi.searchUsers(params)
+    : hasRoleFilter
+      ? await usersApi.filterUsers(params)
+      : await usersApi.getUsers(params);
 
+  const { data } = response;
+
+  let users = data.users.map(toUser);
+
+  // When search is active, apply the selected role
+  // to the search results.
+  if (hasSearch && hasRoleFilter) {
+    users = users.filter(
+      (user) => user.role === params.role
+    );
+  }
+
+  return {
+    users,
+    total: hasSearch && hasRoleFilter
+      ? users.length
+      : data.total,
+    skip: data.skip,
+    limit: data.limit,
+  };
+},
   async getUserById(id: number) {
     const { data } = await usersApi.getUserById(id);
 

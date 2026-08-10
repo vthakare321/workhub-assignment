@@ -3,7 +3,7 @@ import Skeleton from "../Skeleton";
 
 import type { DataTableProps } from "./DataTable.types";
 
-export default function DataTable<T extends Record<string, unknown>>({
+export default function DataTable<T extends object>({
   columns,
   data,
   rowKey,
