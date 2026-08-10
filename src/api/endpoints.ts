@@ -20,5 +20,6 @@ export const ENDPOINTS = {
     CREATE: "/todos/add",
     UPDATE: (id: number) => `/todos/${id}`,
     DELETE: (id: number) => `/todos/${id}`,
+    BY_USER: (userId: number) => `/todos/user/${userId}`,
   },
 } as const;

@@ -16,6 +16,10 @@ export const QUERY_KEYS = {
   WORK_ITEMS: {
     ALL: ["work-items"],
     DETAIL: (id: number) => ["work-items", id],
+    BY_USER: (userId: number) =>
+    ["work-items", "user", userId],
+
+     ASSIGNEES: ["work-items", "assignees"],
   },
 
   PROFILE: ["profile"],

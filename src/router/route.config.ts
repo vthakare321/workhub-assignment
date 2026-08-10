@@ -14,6 +14,8 @@ import {
   SettingsPage,
   ForbiddenPage,
   NotFoundPage,
+  CreateWorkItemPage,
+  EditWorkItemPage,
 } from "./lazy";
 
 import { PERMISSIONS } from "@/config/permissions";
@@ -60,6 +62,18 @@ export const protectedRoutes: AppRoute[] = [
     component: WorkItemsPage,
     permissions: [PERMISSIONS.WORK_ITEMS.READ],
   },
+
+  {
+  path: ROUTES.CREATE_WORK_ITEM,
+  component: CreateWorkItemPage,
+  permissions: [PERMISSIONS.WORK_ITEMS.CREATE],
+},
+
+{
+  path: ROUTES.EDIT_WORK_ITEM,
+  component: EditWorkItemPage,
+  permissions: [PERMISSIONS.WORK_ITEMS.UPDATE],
+},
 
   {
     path: ROUTES.PROFILE,

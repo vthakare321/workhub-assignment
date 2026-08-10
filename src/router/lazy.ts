@@ -21,3 +21,11 @@ export const SettingsPage = lazy(() => import("@/features/settings/pages/Setting
 export const ForbiddenPage = lazy(() => import("@/shared/pages/ForbiddenPage"));
 
 export const NotFoundPage = lazy(() => import("@/shared/pages/NotFoundPage"));
+
+export const CreateWorkItemPage = lazy(() =>
+  import("@/features/work-items/pages/CreateWorkItemPage")
+);
+
+export const EditWorkItemPage = lazy(() =>
+  import("@/features/work-items/pages/EditWorkItemPage")
+);

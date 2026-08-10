@@ -1,3 +1,238 @@
+import { useMemo } from "react";
+
+import {
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+
+import {
+  Button,
+  EmptyState,
+  Loader,
+  Pagination,
+} from "@/shared/components";
+
+import { ROUTES } from "@/shared/constants/routes";
+
+import { WorkItemFilters } from "../components/WorkItemFilters";
+import { WorkItemsTable } from "../components/WorkItemsTable";
+
+import { useAssignees } from "../hooks/useAssignees";
+import { useWorkItems } from "../hooks/useWorkItems";
+
+import type { WorkItem } from "../models/work-item.model";
+import type { WorkItemStatus } from "../types/work-item-list-params";
+
+import { parseWorkItemListParams } from "../utils/parse-work-item-list-params";
+
 export default function WorkItemsPage() {
-  return <div>Work Items Page</div>;
+  const navigate = useNavigate();
+
+  const [searchParams, setSearchParams] =
+    useSearchParams();
+
+  const params =
+    parseWorkItemListParams(searchParams);
+
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+  } = useWorkItems();
+
+  const {
+    data: assignees = [],
+  } = useAssignees();
+
+  const workItems = data?.workItems ?? [];
+
+  const filteredWorkItems = useMemo(() => {
+    const normalizedSearch =
+      params.search.toLowerCase();
+
+    return workItems.filter((workItem) => {
+      const matchesSearch =
+        normalizedSearch === "" ||
+        workItem.title
+          .toLowerCase()
+          .includes(normalizedSearch);
+
+      const matchesStatus =
+        params.status === "all" ||
+        (params.status === "completed" &&
+          workItem.completed) ||
+        (params.status === "pending" &&
+          !workItem.completed);
+
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
+    });
+  }, [
+    workItems,
+    params.search,
+    params.status,
+  ]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      filteredWorkItems.length /
+        params.pageSize
+    )
+  );
+
+  const currentPage = Math.min(
+    params.page,
+    totalPages
+  );
+
+  const paginatedWorkItems =
+    filteredWorkItems.slice(
+      (currentPage - 1) * params.pageSize,
+      currentPage * params.pageSize
+    );
+
+  const updateSearchParams = (
+    updates: Record<
+      string,
+      string | number | undefined
+    >
+  ) => {
+    const nextParams =
+      new URLSearchParams(searchParams);
+
+    Object.entries(updates).forEach(
+      ([key, value]) => {
+        if (
+          value === undefined ||
+          value === ""
+        ) {
+          nextParams.delete(key);
+        } else {
+          nextParams.set(
+            key,
+            String(value)
+          );
+        }
+      }
+    );
+
+    setSearchParams(nextParams);
+  };
+
+  const handleSearchChange = (
+    search: string
+  ) => {
+    updateSearchParams({
+      search: search.trim() || undefined,
+      page: 1,
+    });
+  };
+
+  const handleStatusChange = (
+    status: WorkItemStatus
+  ) => {
+    updateSearchParams({
+      status:
+        status === "all"
+          ? undefined
+          : status,
+      page: 1,
+    });
+  };
+
+  const handlePageChange = (
+    page: number
+  ) => {
+    updateSearchParams({
+      page,
+    });
+  };
+
+  const handleCreate = () => {
+    navigate(ROUTES.CREATE_WORK_ITEM);
+  };
+
+  const handleEdit = (
+    workItem: WorkItem
+  ) => {
+    navigate(
+      ROUTES.EDIT_WORK_ITEM.replace(
+        ":id",
+        String(workItem.id)
+      )
+    );
+  };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-3">
+        <p className="text-sm text-red-500">
+          Failed to load work items.
+        </p>
+
+        <Button
+          variant="outline"
+          onClick={() => refetch()}
+        >
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">
+            Work Items
+          </h1>
+
+          <p className="text-sm text-gray-500">
+            Manage and track work items.
+          </p>
+        </div>
+
+        <Button onClick={handleCreate}>
+          Create Work Item
+        </Button>
+      </div>
+
+      <WorkItemFilters
+        search={params.search}
+        status={params.status}
+        onSearchChange={handleSearchChange}
+        onStatusChange={handleStatusChange}
+      />
+
+      {filteredWorkItems.length === 0 ? (
+        <EmptyState
+          title="No work items found"
+          description="There are no work items matching the current criteria."
+        />
+      ) : (
+        <>
+          <WorkItemsTable
+            workItems={paginatedWorkItems}
+            assignees={assignees}
+            onEdit={handleEdit}
+          />
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
+      )}
+    </div>
+  );
 }
