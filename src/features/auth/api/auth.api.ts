@@ -12,9 +12,17 @@ export const authApi = {
     );
   },
 
-  getUser(id: number) {
+  
+
+   getUser(id: number) {
     return apiClient.get<UserResponseDto>(
       ENDPOINTS.USERS.DETAIL(id)
+    );
+  },
+
+  getCurrentUser() {
+    return apiClient.get<UserResponseDto>(
+      ENDPOINTS.AUTH.ME
     );
   },
 };
