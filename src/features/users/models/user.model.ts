@@ -18,6 +18,8 @@ export interface User {
 
   department: string;
 
+  isLocal?: boolean;
+
   companyName: string;
 
   address: {

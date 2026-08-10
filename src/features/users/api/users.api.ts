@@ -73,14 +73,14 @@ export const usersApi = {
   },
 
   updateUser(
-    id: number,
-    payload: UpdateUserRequestDto
-  ) {
-    return apiClient.put<UserResponseDto>(
-      ENDPOINTS.USERS.UPDATE(id),
-      payload
-    );
-  },
+  id: number,
+  payload: UpdateUserRequestDto
+) {
+  return apiClient.patch(
+    ENDPOINTS.USERS.UPDATE(id),
+    payload
+  );
+},
 
   deleteUser(id: number) {
     return apiClient.delete<UserResponseDto>(

@@ -12,6 +12,7 @@ export interface ConfirmDialogProps {
 
   onConfirm: () => void;
   onCancel: () => void;
+  isLoading?: boolean;
 
   icon?: ReactNode;
 }

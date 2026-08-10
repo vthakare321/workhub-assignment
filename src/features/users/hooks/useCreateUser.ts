@@ -10,7 +10,6 @@ import { QUERY_KEYS } from "@/api";
 import { usersService } from "../services/users.service";
 
 import type { CreateUserRequestDto } from "../dto/create-user-request.dto";
-
 import type { User } from "../models/user.model";
 
 type UsersListData = {
@@ -27,19 +26,32 @@ export function useCreateUser() {
     mutationFn: (payload: CreateUserRequestDto) =>
       usersService.createUser(payload),
 
-   onSuccess: (createdUser) => {
+   onSuccess: (createdUser, payload) => {
+  const localUser = {
+    ...createdUser,
+    ...payload,
+    fullName: `${payload.firstName} ${payload.lastName}`,
+    isLocal: true,
+  };
+
   queryClient.setQueriesData<UsersListData>(
     {
       queryKey: QUERY_KEYS.USERS.ALL,
     },
     (oldData) => {
-      if (!oldData) {
+      if (
+        !oldData ||
+        !Array.isArray(oldData.users)
+      ) {
         return oldData;
       }
 
       return {
         ...oldData,
-        users: [createdUser, ...oldData.users],
+        users: [
+          localUser,
+          ...oldData.users,
+        ],
         total: oldData.total + 1,
       };
     }

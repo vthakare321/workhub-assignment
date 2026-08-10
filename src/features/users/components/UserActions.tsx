@@ -1,8 +1,15 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "@/shared/components";
+import {
+  Button,
+  ConfirmDialog,
+} from "@/shared/components";
+
 import { ROUTES } from "@/shared/constants/routes";
 import { useAuthStore } from "@/stores/auth.store";
+
+import { useDeleteUser } from "../hooks/useDeleteUser";
 
 import type { User } from "../models/user.model";
 
@@ -15,11 +22,19 @@ export function UserActions({
 }: UserActionsProps) {
   const navigate = useNavigate();
 
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] =
+    useState(false);
+
   const currentUser = useAuthStore(
     (state) => state.user
   );
 
   const isAdmin = currentUser?.role === "admin";
+
+  const {
+    mutate: deleteUser,
+    isPending,
+  } = useDeleteUser();
 
   const handleView = () => {
     navigate(
@@ -39,29 +54,57 @@ export function UserActions({
     );
   };
 
+  const handleDelete = () => {
+    deleteUser(user.id, {
+      onSuccess: () => {
+        setIsDeleteDialogOpen(false);
+      },
+    });
+  };
+
   return (
-    <div className="flex items-center gap-2">
-      <Button
-        variant="outline"
-        onClick={handleView}
-      >
-        View
-      </Button>
+    <>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          onClick={handleView}
+        >
+          View
+        </Button>
 
-      {isAdmin && (
-        <>
-          <Button
-            variant="outline"
-            onClick={handleEdit}
-          >
-            Edit
-          </Button>
+        {isAdmin && (
+          <>
+            <Button
+              variant="outline"
+              onClick={handleEdit}
+            >
+              Edit
+            </Button>
 
-          <Button variant="outline">
-            Delete
-          </Button>
-        </>
-      )}
-    </div>
+            <Button
+              variant="outline"
+              onClick={() =>
+                setIsDeleteDialogOpen(true)
+              }
+            >
+              Delete
+            </Button>
+          </>
+        )}
+      </div>
+
+      <ConfirmDialog
+        open={isDeleteDialogOpen}
+        onCancel={() =>
+          setIsDeleteDialogOpen(false)
+        }
+        onConfirm={handleDelete}
+        title="Delete User"
+        description={`Are you sure you want to delete ${user.fullName}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={isPending}
+      />
+    </>
   );
 }
