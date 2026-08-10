@@ -1,9 +1,16 @@
+import type { UserListParams } from "@/features/users/types/user-list-params";
+
 export const QUERY_KEYS = {
   AUTH: ["auth"],
 
   USERS: {
     ALL: ["users"],
-    DETAIL: (id: number) => ["users", id],
+
+    LIST: (params: UserListParams) =>
+      ["users", "list", params] as const,
+
+    DETAIL: (id: number) =>
+      ["users", "detail", id] as const,
   },
 
   WORK_ITEMS: {
