@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "@/shared/components";
+import { ROUTES } from "@/shared/constants/routes";
 import { useAuthStore } from "@/stores/auth.store";
 
 import type { User } from "../models/user.model";
@@ -21,15 +22,21 @@ export function UserActions({
   const isAdmin = currentUser?.role === "admin";
 
   const handleView = () => {
-    navigate(`/app/users/${user.id}`);
+    navigate(
+      ROUTES.USER_DETAIL.replace(
+        ":id",
+        String(user.id)
+      )
+    );
   };
 
   const handleEdit = () => {
-    navigate(`/app/users/${user.id}/edit`);
-  };
-
-  const handleDelete = () => {
-    // Delete logic will be added later
+    navigate(
+      ROUTES.EDIT_USER.replace(
+        ":id",
+        String(user.id)
+      )
+    );
   };
 
   return (
@@ -50,10 +57,7 @@ export function UserActions({
             Edit
           </Button>
 
-          <Button
-            variant="outline"
-            onClick={handleDelete}
-          >
+          <Button variant="outline">
             Delete
           </Button>
         </>

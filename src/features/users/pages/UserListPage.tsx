@@ -17,6 +17,7 @@ import { UserTable } from "../components/UserTable";
 import { useUsers } from "../hooks/useUsers";
 import type { UserListParams } from "../types/user-list-params";
 import { parseUserListParams } from "../utils/parse-user-list-params";
+import { ROUTES } from "@/shared/constants/routes";
 
 export default function UserListPage() {
   const [searchParams, setSearchParams] =
@@ -149,7 +150,7 @@ export default function UserListPage() {
         description="Manage and view application users."
         rightContent={
           currentUser?.role === "admin" ? (
-            <Link to="/app/users/create">
+            <Link to={ROUTES.CREATE_USER}>
               <Button>
                 Create User
               </Button>
