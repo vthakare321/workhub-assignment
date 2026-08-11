@@ -1,98 +1,46 @@
-export const protectedRoutes: AppRoute[] = [
-  {
-    path: "dashboard",
-    component: DashboardPage,
-    permissions: [
-      PERMISSIONS.DASHBOARD.READ,
-    ],
-    navigation: {
-      label: "Dashboard",
-    },
-  },
+{protectedRoutes
+  .filter((route) => route.navigation)
+  .map((route) => {
+    const navigation = route.navigation;
 
-  {
-    path: "users",
-    component: UserListPage,
-    permissions: [
-      PERMISSIONS.USERS.READ,
-    ],
-    navigation: {
-      label: "Users",
-    },
-  },
+    if (!navigation) {
+      return null;
+    }
 
-  {
-    path: "users/:userId",
-    component: UserDetailPage,
-    permissions: [
-      PERMISSIONS.USERS.READ,
-    ],
-  },
+    const hasPermission =
+      allowedPermissions.includes(
+        navigation.permission
+      );
 
-  {
-    path: "users/new",
-    component: CreateUserPage,
-    permissions: [
-      PERMISSIONS.USERS.CREATE,
-    ],
-  },
+    if (!hasPermission) {
+      return null;
+    }
 
-  {
-    path: "users/:userId/edit",
-    component: EditUserPage,
-    permissions: [
-      PERMISSIONS.USERS.UPDATE,
-    ],
-  },
-
-  {
-    path: "work-items",
-    component: WorkItemsPage,
-    permissions: [
-      PERMISSIONS.WORK_ITEMS.READ,
-    ],
-    navigation: {
-      label: "Work Items",
-    },
-  },
-
-  {
-    path: "work-items/new",
-    component: CreateWorkItemPage,
-    permissions: [
-      PERMISSIONS.WORK_ITEMS.CREATE,
-    ],
-  },
-
-  {
-    path: "work-items/:id/edit",
-    component: EditWorkItemPage,
-    permissions: [
-      PERMISSIONS.WORK_ITEMS.UPDATE,
-    ],
-  },
-
-  {
-    path: "profile",
-    component: ProfilePage,
-    permissions: [
-      PERMISSIONS.PROFILE.READ,
-      PERMISSIONS.PROFILE.UPDATE,
-    ],
-    navigation: {
-      label: "Profile",
-    },
-  },
-
-  {
-    path: "settings",
-    component: SettingsPage,
-    permissions: [
-      PERMISSIONS.SETTINGS.READ,
-      PERMISSIONS.SETTINGS.UPDATE,
-    ],
-    navigation: {
-      label: "Settings",
-    },
-  },
-];
+    return (
+      <NavLink
+        key={route.path}
+        to={route.path}
+        end={route.path === "dashboard"}
+        title={
+          sidebarCollapsed
+            ? navigation.label
+            : undefined
+        }
+        className={({ isActive }) =>
+          `relative rounded-lg px-4 py-3 font-medium transition ${
+            isActive
+              ? "bg-blue-600 font-semibold text-white before:absolute before:left-0 before:top-1/2 before:h-6 before:w-1 before:-translate-y-1/2 before:rounded-r"
+              : "text-gray-700 hover:bg-gray-100"
+          } ${
+            sidebarCollapsed
+              ? "text-center"
+              : ""
+          }`
+        }
+      >
+        {sidebarCollapsed
+          ? navigation.label.charAt(0)
+          : navigation.label}
+      </NavLink>
+    );
+  })}
