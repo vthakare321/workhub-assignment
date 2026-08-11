@@ -23,6 +23,18 @@ export const usersApi = {
     );
   },
 
+getAllUsers() {
+  return apiClient.get<UsersListResponseDto>(
+    ENDPOINTS.USERS.LIST,
+    {
+      params: {
+        limit: 0,
+        skip: 0,
+      },
+    }
+  );
+},
+
   searchUsers(params: UserListParams) {
     const skip = (params.page - 1) * params.pageSize;
 
@@ -89,14 +101,3 @@ export const usersApi = {
   },
 };
 
-getAllUsers() {
-  return apiClient.get<UsersListResponseDto>(
-    ENDPOINTS.USERS.LIST,
-    {
-      params: {
-        limit: 0,
-        skip: 0,
-      },
-    }
-  );
-},

@@ -39,6 +39,22 @@ export const usersService = {
     limit: data.limit,
   };
 },
+
+ async getAllUsers() {
+    const { data } =
+      await usersApi.getAllUsers();
+
+    return {
+      users: data.users.map(toUser),
+      total: data.total,
+      skip: data.skip,
+      limit: data.limit,
+    };
+  },
+
+
+
+
   async getUserById(id: number) {
     const { data } = await usersApi.getUserById(id);
 
