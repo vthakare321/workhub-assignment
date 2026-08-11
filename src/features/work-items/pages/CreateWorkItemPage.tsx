@@ -10,6 +10,10 @@ import { useCreateWorkItem } from "../hooks/useCreateWorkItem";
 
 import type { WorkItemFormValues } from "../types/work-item-form.types";
 
+import {
+  toCreateWorkItemRequest,
+} from "../mappers/work-item-form.mapper";
+
 export default function CreateWorkItemPage() {
   const navigate = useNavigate();
 
@@ -27,11 +31,7 @@ export default function CreateWorkItemPage() {
     values: WorkItemFormValues
   ) => {
     createWorkItem(
-      {
-        todo: values.title,
-        completed: values.completed,
-        userId: values.userId,
-      },
+  toCreateWorkItemRequest(values),
       {
         onSuccess: () => {
           navigate(ROUTES.WORK_ITEMS);

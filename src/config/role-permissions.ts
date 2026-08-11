@@ -44,5 +44,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
 
     PERMISSIONS.PROFILE.READ,
     PERMISSIONS.PROFILE.UPDATE,
+
+    PERMISSIONS.WORK_ITEMS.CREATE,
   ],
 };

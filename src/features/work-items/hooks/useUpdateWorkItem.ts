@@ -12,13 +12,6 @@ import { workItemsService } from "../services/work-items.service";
 import type { UpdateWorkItemRequestDto } from "../dto/update-work-item-request.dto";
 import type { WorkItem } from "../models/work-item.model";
 
-type WorkItemsListData = {
-  workItems: WorkItem[];
-  total: number;
-  skip: number;
-  limit: number;
-};
-
 interface UpdateWorkItemVariables {
   id: number;
   payload: UpdateWorkItemRequestDto;
@@ -53,7 +46,8 @@ export function useUpdateWorkItem() {
       );
     },
 
-    onSuccess: (updatedWorkItem) => {
+    onSuccess: async (updatedWorkItem) => {
+      // Update the detail cache immediately.
       queryClient.setQueryData(
         QUERY_KEYS.WORK_ITEMS.DETAIL(
           updatedWorkItem.id
@@ -61,63 +55,15 @@ export function useUpdateWorkItem() {
         updatedWorkItem
       );
 
-      queryClient.setQueriesData<WorkItemsListData>(
-        {
-          queryKey: QUERY_KEYS.WORK_ITEMS.ALL,
-        },
-        (oldData) => {
-          if (
-            !oldData ||
-            !Array.isArray(oldData.workItems)
-          ) {
-            return oldData;
-          }
+      // Refetch all-work-items cache.
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.WORK_ITEMS.ALL,
+      });
 
-          return {
-            ...oldData,
-            workItems: oldData.workItems.map(
-              (workItem) =>
-                workItem.id === updatedWorkItem.id
-                  ? {
-                      ...updatedWorkItem,
-                      isLocal:
-                        workItem.isLocal ??
-                        updatedWorkItem.isLocal,
-                    }
-                  : workItem
-            ),
-          };
-        }
-      );
-
-      queryClient.setQueriesData<WorkItemsListData>(
-        {
-          queryKey: ["work-items", "user"],
-        },
-        (oldData) => {
-          if (
-            !oldData ||
-            !Array.isArray(oldData.workItems)
-          ) {
-            return oldData;
-          }
-
-          return {
-            ...oldData,
-            workItems: oldData.workItems.map(
-              (workItem) =>
-                workItem.id === updatedWorkItem.id
-                  ? {
-                      ...updatedWorkItem,
-                      isLocal:
-                        workItem.isLocal ??
-                        updatedWorkItem.isLocal,
-                    }
-                  : workItem
-            ),
-          };
-        }
-      );
+      // Refetch contributor-specific caches.
+      await queryClient.invalidateQueries({
+        queryKey: ["work-items", "user"],
+      });
 
       toast.success(
         "Work item updated successfully"

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams,  Navigate, } from "react-router-dom";
 
 import {
   Button,
@@ -15,8 +15,20 @@ import { useWorkItem } from "../hooks/useWorkItem";
 
 import type { WorkItemFormValues } from "../types/work-item-form.types";
 
+import {
+  toUpdateWorkItemRequest,
+} from "../mappers/work-item-form.mapper";
+
+import { useAuthStore } from "@/stores/auth.store";
+
+import { ROLES } from "@/config/roles";
+
 export default function EditWorkItemPage() {
   const navigate = useNavigate();
+
+  const currentUser = useAuthStore(
+  (state) => state.user
+);
 
   const { id } = useParams();
 
@@ -46,11 +58,7 @@ export default function EditWorkItemPage() {
     updateWorkItem(
       {
         id: workItemId,
-        payload: {
-          todo: values.title,
-          completed: values.completed,
-          userId: values.userId,
-        },
+        payload: toUpdateWorkItemRequest(values),
       },
       {
         onSuccess: () => {
@@ -72,6 +80,19 @@ export default function EditWorkItemPage() {
   }
 
   if (
+  currentUser?.role === ROLES.CONTRIBUTOR &&
+  workItem &&
+  workItem.userId !== currentUser.id
+) {
+  return (
+    <Navigate
+      to={ROUTES.FORBIDDEN}
+      replace
+    />
+  );
+}
+
+  if (
     isWorkItemError ||
     isAssigneesError ||
     !workItem
@@ -91,6 +112,21 @@ export default function EditWorkItemPage() {
       </div>
     );
   }
+
+const isContributor =
+  currentUser?.role === ROLES.CONTRIBUTOR;
+
+const isOwner =
+  currentUser?.id === workItem.userId;
+
+if (isContributor && !isOwner) {
+  return (
+    <Navigate
+      to={ROUTES.FORBIDDEN}
+      replace
+    />
+  );
+}
 
   return (
     <div className="space-y-6">

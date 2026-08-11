@@ -25,8 +25,39 @@ import type { WorkItemStatus } from "../types/work-item-list-params";
 
 import { parseWorkItemListParams } from "../utils/parse-work-item-list-params";
 
+import { useAuthStore } from "@/stores/auth.store";
+
+import { usePreferencesStore } from "@/stores/preferences.store";
+
+import {
+  ROLE_PERMISSIONS,
+} from "@/config/role-permissions";
+
+import {
+  PERMISSIONS,
+} from "@/config/permissions";
+
 export default function WorkItemsPage() {
   const navigate = useNavigate();
+
+
+  const currentUser = useAuthStore(
+  (state) => state.user
+);
+
+const canCreateWorkItem =
+  currentUser !== null &&
+  ROLE_PERMISSIONS[currentUser.role].includes(
+    PERMISSIONS.WORK_ITEMS.CREATE
+  );
+
+const defaultPageSize = usePreferencesStore(
+  (state) => state.defaultPageSize
+);
+
+const canFilterByAssignee =
+  currentUser?.role === "admin" ||
+  currentUser?.role === "manager";
 
   const [searchParams, setSearchParams] =
     useSearchParams();
@@ -34,11 +65,17 @@ export default function WorkItemsPage() {
   const params =
     parseWorkItemListParams(searchParams);
 
+    const pageSize =
+  searchParams.has("pageSize")
+    ? params.pageSize
+    : defaultPageSize;
+
   const {
     data,
-    isLoading,
-    isError,
-    refetch,
+  isLoading,
+  isFetching,
+  isError,
+  refetch,
   } = useWorkItems();
 
   const {
@@ -47,41 +84,63 @@ export default function WorkItemsPage() {
 
   const workItems = data?.workItems ?? [];
 
-  const filteredWorkItems = useMemo(() => {
-    const normalizedSearch =
-      params.search.toLowerCase();
+ const filteredWorkItems = useMemo(() => {
+  const normalizedSearch =
+    params.search.toLowerCase();
 
-    return workItems.filter((workItem) => {
-      const matchesSearch =
-        normalizedSearch === "" ||
-        workItem.title
-          .toLowerCase()
-          .includes(normalizedSearch);
+  return workItems.filter((workItem) => {
+    const matchesSearch =
+      normalizedSearch === "" ||
+      workItem.title
+        .toLowerCase()
+        .includes(normalizedSearch);
 
-      const matchesStatus =
-        params.status === "all" ||
-        (params.status === "completed" &&
-          workItem.completed) ||
-        (params.status === "pending" &&
-          !workItem.completed);
+    const matchesStatus =
+      params.status === "all" ||
+      (params.status === "completed" &&
+        workItem.completed) ||
+      (params.status === "pending" &&
+        !workItem.completed);
 
-      return (
-        matchesSearch &&
-        matchesStatus
-      );
-    });
-  }, [
-    workItems,
-    params.search,
-    params.status,
-  ]);
+    const matchesAssignee =
+      !params.assigneeId ||
+      workItem.userId === params.assigneeId;
+
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesAssignee
+    );
+  });
+}, [
+  workItems,
+  params.search,
+  params.status,
+  params.assigneeId,
+]);
+
+const handleAssigneeChange = (
+  value: string
+) => {
+  const assigneeId = Number(value);
+
+  updateSearchParams({
+    assigneeId:
+      value === "" ||
+      !Number.isInteger(assigneeId) ||
+      assigneeId < 1
+        ? undefined
+        : assigneeId,
+    page: 1,
+  });
+};
 
   const totalPages = Math.max(
     1,
     Math.ceil(
-      filteredWorkItems.length /
-        params.pageSize
-    )
+  filteredWorkItems.length /
+  pageSize
+)
   );
 
   const currentPage = Math.min(
@@ -89,11 +148,11 @@ export default function WorkItemsPage() {
     totalPages
   );
 
-  const paginatedWorkItems =
-    filteredWorkItems.slice(
-      (currentPage - 1) * params.pageSize,
-      currentPage * params.pageSize
-    );
+const paginatedWorkItems =
+  filteredWorkItems.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const updateSearchParams = (
     updates: Record<
@@ -201,38 +260,58 @@ export default function WorkItemsPage() {
           </p>
         </div>
 
-        <Button onClick={handleCreate}>
-          Create Work Item
-        </Button>
+        {canCreateWorkItem && (
+  <Button onClick={handleCreate}>
+    Create Work Item
+  </Button>
+)}
       </div>
 
       <WorkItemFilters
         search={params.search}
-        status={params.status}
-        onSearchChange={handleSearchChange}
-        onStatusChange={handleStatusChange}
+  status={params.status}
+  assigneeId={params.assigneeId}
+  assignees={assignees}
+  showAssigneeFilter={canFilterByAssignee}
+  onSearchChange={handleSearchChange}
+  onStatusChange={handleStatusChange}
+  onAssigneeChange={handleAssigneeChange}
       />
 
-      {filteredWorkItems.length === 0 ? (
-        <EmptyState
-          title="No work items found"
-          description="There are no work items matching the current criteria."
-        />
-      ) : (
-        <>
-          <WorkItemsTable
-            workItems={paginatedWorkItems}
-            assignees={assignees}
-            onEdit={handleEdit}
-          />
+    {isFetching && !isLoading && (
+  <p
+    className="text-sm text-gray-500"
+    aria-live="polite"
+  >
+    Refreshing work items...
+  </p>
+)}
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </>
-      )}
+     {workItems.length === 0 ? (
+  <EmptyState
+    title="No work items"
+    description="There are no work items available."
+  />
+) : filteredWorkItems.length === 0 ? (
+  <EmptyState
+    title="No matching work items"
+    description="No work items match the current search or filters."
+  />
+) : (
+  <>
+    <WorkItemsTable
+      workItems={paginatedWorkItems}
+      assignees={assignees}
+      onEdit={handleEdit}
+    />
+
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={handlePageChange}
+    />
+  </>
+)}
     </div>
   );
 }
