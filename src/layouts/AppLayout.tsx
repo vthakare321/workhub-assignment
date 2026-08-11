@@ -5,7 +5,7 @@ import Sidebar from "./Sidebar";
 
 export default function AppLayout() {
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       {/* Sidebar */}
       <Sidebar />
 
@@ -15,7 +15,7 @@ export default function AppLayout() {
         <Header />
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto bg-gray-100 p-6 dark:bg-gray-950">
           <Outlet />
         </main>
       </div>

@@ -79,7 +79,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
 
-      <div className="rounded-lg bg-white p-6 text-black dark:bg-gray-900 dark:text-white">
+      <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
   <h2 className="text-lg font-semibold">
     Theme Test
   </h2>
