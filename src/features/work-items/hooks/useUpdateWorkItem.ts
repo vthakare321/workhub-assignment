@@ -21,47 +21,28 @@ export function useUpdateWorkItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
+    mutationFn: ({
       id,
       payload,
-    }: UpdateWorkItemVariables) => {
-      const cachedWorkItem =
-        queryClient.getQueryData<WorkItem>(
-          QUERY_KEYS.WORK_ITEMS.DETAIL(id)
-        );
+    }: UpdateWorkItemVariables) =>
+      workItemsService.updateWorkItem(id, payload),
 
-      if (cachedWorkItem?.isLocal) {
-        return {
-          ...cachedWorkItem,
-          title: payload.todo,
-          completed: payload.completed,
-          userId: payload.userId,
-          isLocal: true,
-        };
-      }
-
-      return workItemsService.updateWorkItem(
-        id,
-        payload
-      );
-    },
-
-    onSuccess: async (updatedWorkItem) => {
+    onSuccess: (updatedWorkItem) => {
       // Update the detail cache immediately.
-      queryClient.setQueryData(
+      queryClient.setQueryData<WorkItem>(
         QUERY_KEYS.WORK_ITEMS.DETAIL(
           updatedWorkItem.id
         ),
         updatedWorkItem
       );
 
-      // Refetch all-work-items cache.
-      await queryClient.invalidateQueries({
+      // Refresh all work-item queries.
+      queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.WORK_ITEMS.ALL,
       });
 
-      // Refetch contributor-specific caches.
-      await queryClient.invalidateQueries({
+      // Refresh contributor-specific work-item queries.
+      queryClient.invalidateQueries({
         queryKey: ["work-items", "user"],
       });
 

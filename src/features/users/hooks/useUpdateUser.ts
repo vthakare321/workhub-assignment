@@ -28,42 +28,20 @@ export function useUpdateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
+    mutationFn: ({
       id,
       payload,
-    }: UpdateUserVariables) => {
-      const cachedQueries =
-        queryClient.getQueriesData<UsersListData>({
-          queryKey: QUERY_KEYS.USERS.ALL,
-        });
-
-      for (const [, data] of cachedQueries) {
-        const cachedUser = data?.users.find(
-          (user) => user.id === id
-        );
-
-        if (cachedUser) {
-          return {
-            ...cachedUser,
-            ...payload,
-            fullName: `${payload.firstName} ${payload.lastName}`,
-          };
-        }
-      }
-
-      return usersService.updateUser(id, payload);
-    },
+    }: UpdateUserVariables) =>
+      usersService.updateUser(id, payload),
 
     onSuccess: (updatedUser, { id }) => {
+      // Update every cached users-list query.
       queryClient.setQueriesData<UsersListData>(
         {
           queryKey: QUERY_KEYS.USERS.ALL,
         },
         (oldData) => {
-          if (
-            !oldData ||
-            !Array.isArray(oldData.users)
-          ) {
+          if (!oldData?.users) {
             return oldData;
           }
 
@@ -78,6 +56,7 @@ export function useUpdateUser() {
         }
       );
 
+      // Update the individual user-detail cache.
       queryClient.setQueryData<User>(
         QUERY_KEYS.USERS.DETAIL(id),
         updatedUser

@@ -1,72 +1,84 @@
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { usersApi } from "../api/users.api";
 
-import toast from "react-hot-toast";
+import { toUser } from "../mappers/user.mapper";
 
-import { QUERY_KEYS } from "@/api";
-
-import { usersService } from "../services/users.service";
-
+import type { CreateUserRequestDto } from "../dto/create-user-request.dto";
 import type { UpdateUserRequestDto } from "../dto/update-user-request.dto";
-import type { User } from "../models/user.model";
 
-type UsersListData = {
-  users: User[];
-  total: number;
-  skip: number;
-  limit: number;
+import type { UserListParams } from "../types/user-list-params";
+
+export const usersService = {
+ async getUsers(params: UserListParams) {
+  const hasSearch = params.q.trim() !== "";
+  const hasRoleFilter = params.role !== "all";
+
+  const response = hasSearch
+    ? await usersApi.searchUsers(params)
+    : hasRoleFilter
+      ? await usersApi.filterUsers(params)
+      : await usersApi.getUsers(params);
+
+  const { data } = response;
+
+  let users = data.users.map(toUser);
+
+  // When search is active, apply the selected role
+  // to the search results.
+  if (hasSearch && hasRoleFilter) {
+    users = users.filter(
+      (user) => user.role === params.role
+    );
+  }
+
+  return {
+    users,
+    total: hasSearch && hasRoleFilter
+      ? users.length
+      : data.total,
+    skip: data.skip,
+    limit: data.limit,
+  };
+},
+
+ async getAllUsers() {
+    const { data } =
+      await usersApi.getAllUsers();
+
+    return {
+      users: data.users.map(toUser),
+      total: data.total,
+      skip: data.skip,
+      limit: data.limit,
+    };
+  },
+
+
+
+
+  async getUserById(id: number) {
+    const { data } = await usersApi.getUserById(id);
+
+    return toUser(data);
+  },
+
+  async createUser(payload: CreateUserRequestDto) {
+    const { data } = await usersApi.createUser(payload);
+
+    return toUser(data);
+  },
+
+  async updateUser(
+    id: number,
+    payload: UpdateUserRequestDto
+  ) {
+    const { data } = await usersApi.updateUser(id, payload);
+
+    return toUser(data);
+  },
+
+  async deleteUser(id: number) {
+    const { data } = await usersApi.deleteUser(id);
+
+    return data;
+  },
 };
-
-interface UpdateUserVariables {
-  id: number;
-  payload: UpdateUserRequestDto;
-}
-
-export function useUpdateUser() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: UpdateUserVariables) =>
-      usersService.updateUser(id, payload),
-
-    onSuccess: (updatedUser, { id }) => {
-      // Update every cached users-list query.
-      queryClient.setQueriesData<UsersListData>(
-        {
-          queryKey: QUERY_KEYS.USERS.ALL,
-        },
-        (oldData) => {
-          if (!oldData?.users) {
-            return oldData;
-          }
-
-          return {
-            ...oldData,
-            users: oldData.users.map((user) =>
-              user.id === id
-                ? updatedUser
-                : user
-            ),
-          };
-        }
-      );
-
-      // Update the individual user-detail cache.
-      queryClient.setQueryData<User>(
-        QUERY_KEYS.USERS.DETAIL(id),
-        updatedUser
-      );
-
-      toast.success("User updated successfully");
-    },
-
-    onError: () => {
-      toast.error("Failed to update user");
-    },
-  });
-}
