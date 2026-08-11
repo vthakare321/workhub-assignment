@@ -1,5 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 import { ROUTES } from "@/shared/constants/routes";
@@ -8,8 +11,17 @@ import { useAuthStore } from "@/stores/auth.store";
 import { authService } from "../services/auth.service";
 import type { LoginRequestDto } from "../dto/login-request.dto";
 
+interface LoginLocationState {
+  from?: {
+    pathname?: string;
+    search?: string;
+    hash?: string;
+  };
+}
+
 export function useLogin() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const login = useAuthStore((state) => state.login);
 
@@ -18,20 +30,23 @@ export function useLogin() {
       authService.login(payload),
 
     onSuccess: (response) => {
-        console.log("Service Response:", response);
-        console.log("Mapped User:", response.user);
       login({
         accessToken: response.accessToken,
         user: response.user,
       });
 
-
-
-      
-
       toast.success("Login successful");
 
-      navigate(ROUTES.DASHBOARD, {
+      const state =
+        location.state as LoginLocationState | null;
+
+      const from = state?.from;
+
+      const destination = from
+        ? `${from.pathname ?? ""}${from.search ?? ""}${from.hash ?? ""}`
+        : ROUTES.DASHBOARD;
+
+      navigate(destination, {
         replace: true,
       });
     },

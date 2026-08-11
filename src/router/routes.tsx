@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import AppLayout from "@/layouts/AppLayout";
 import AuthLayout from "@/layouts/AuthLayout";
+import { ROUTES } from "@/shared/constants/routes";
 
 import ProtectedRoute from "./ProtectedRoute";
 import PermissionGuard from "./PermissionGuard";
@@ -12,9 +13,8 @@ import {
   errorRoutes,
 } from "./route.config";
 
-import { ROUTES } from "@/shared/constants/routes";
-
 export const router = createBrowserRouter([
+  // Public routes
   {
     element: <AuthLayout />,
     children: publicRoutes.map((route) => ({
@@ -23,7 +23,9 @@ export const router = createBrowserRouter([
     })),
   },
 
+  // Protected application boundary
   {
+    path: ROUTES.APP,
     element: <ProtectedRoute />,
     children: [
       {
@@ -33,7 +35,7 @@ export const router = createBrowserRouter([
             index: true,
             element: (
               <Navigate
-                to={ROUTES.DASHBOARD}
+                to="dashboard"
                 replace
               />
             ),
@@ -54,6 +56,7 @@ export const router = createBrowserRouter([
     ],
   },
 
+  // Error / fallback routes
   ...errorRoutes.map((route) => ({
     path: route.path,
     element: <route.component />,

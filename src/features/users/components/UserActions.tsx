@@ -38,19 +38,19 @@ export function UserActions({
 
   const handleView = () => {
     navigate(
-      ROUTES.USER_DETAIL.replace(
-        ":id",
-        String(user.id)
-      )
+     ROUTES.USER_DETAIL.replace(
+  ":userId",
+  String(user.id)
+)
     );
   };
 
   const handleEdit = () => {
     navigate(
-      ROUTES.EDIT_USER.replace(
-        ":id",
-        String(user.id)
-      )
+     ROUTES.EDIT_USER.replace(
+  ":userId",
+  String(user.id)
+)
     );
   };
 

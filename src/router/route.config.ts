@@ -29,62 +29,68 @@ export const publicRoutes: AppRoute[] = [
 
 export const protectedRoutes: AppRoute[] = [
   {
-    path: ROUTES.DASHBOARD,
+    path: "dashboard",
     component: DashboardPage,
   },
 
   {
-    path: ROUTES.USERS,
+    path: "users",
     component: UserListPage,
-    permissions: [PERMISSIONS.USERS.READ]
+    permissions: [PERMISSIONS.USERS.READ],
   },
 
   {
-    path: ROUTES.USER_DETAIL,
+    path: "users/:userId",
     component: UserDetailPage,
-   permissions: [PERMISSIONS.USERS.READ]
+    permissions: [PERMISSIONS.USERS.READ],
   },
 
   {
-    path: ROUTES.CREATE_USER,
+    path: "users/new",
     component: CreateUserPage,
     permissions: [PERMISSIONS.USERS.CREATE],
   },
 
   {
-    path: ROUTES.EDIT_USER,
+    path: "users/:userId/edit",
     component: EditUserPage,
     permissions: [PERMISSIONS.USERS.UPDATE],
   },
 
   {
-    path: ROUTES.WORK_ITEMS,
+    path: "work-items",
     component: WorkItemsPage,
     permissions: [PERMISSIONS.WORK_ITEMS.READ],
   },
 
   {
-  path: ROUTES.CREATE_WORK_ITEM,
-  component: CreateWorkItemPage,
-  permissions: [PERMISSIONS.WORK_ITEMS.CREATE],
-},
-
-{
-  path: ROUTES.EDIT_WORK_ITEM,
-  component: EditWorkItemPage,
-  permissions: [PERMISSIONS.WORK_ITEMS.UPDATE],
-},
-
-  {
-    path: ROUTES.PROFILE,
-    component: ProfilePage,
-    permissions: [PERMISSIONS.PROFILE.READ, PERMISSIONS.PROFILE.UPDATE],
+    path: "work-items/new",
+    component: CreateWorkItemPage,
+    permissions: [PERMISSIONS.WORK_ITEMS.CREATE],
   },
 
   {
-    path: ROUTES.SETTINGS,
+    path: "work-items/:id/edit",
+    component: EditWorkItemPage,
+    permissions: [PERMISSIONS.WORK_ITEMS.UPDATE],
+  },
+
+  {
+    path: "profile",
+    component: ProfilePage,
+    permissions: [
+      PERMISSIONS.PROFILE.READ,
+      PERMISSIONS.PROFILE.UPDATE,
+    ],
+  },
+
+  {
+    path: "settings",
     component: SettingsPage,
-    permissions: [PERMISSIONS.SETTINGS.READ, PERMISSIONS.SETTINGS.UPDATE],
+    permissions: [
+      PERMISSIONS.SETTINGS.READ,
+      PERMISSIONS.SETTINGS.UPDATE,
+    ],
   },
 ];
 

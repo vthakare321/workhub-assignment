@@ -46,10 +46,10 @@ export default function EditUserPage() {
       {
         onSuccess: () => {
           navigate(
-            ROUTES.USER_DETAIL.replace(
-              ":id",
-              String(userId)
-            )
+           ROUTES.USER_DETAIL.replace(
+  ":userId",
+  String(userId)
+)
           );
         },
       }

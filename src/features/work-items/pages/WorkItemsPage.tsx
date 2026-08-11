@@ -82,7 +82,10 @@ const canFilterByAssignee =
     data: assignees = [],
   } = useAssignees();
 
-  const workItems = data?.workItems ?? [];
+  const workItems = useMemo(
+  () => data?.workItems ?? [],
+  [data?.workItems]
+);
 
  const filteredWorkItems = useMemo(() => {
   const normalizedSearch =
