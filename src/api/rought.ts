@@ -1,34 +1,98 @@
-import { Outlet } from "react-router-dom";
+export const protectedRoutes: AppRoute[] = [
+  {
+    path: "dashboard",
+    component: DashboardPage,
+    permissions: [
+      PERMISSIONS.DASHBOARD.READ,
+    ],
+    navigation: {
+      label: "Dashboard",
+    },
+  },
 
-import Header from "./Header";
-import Sidebar from "./Sidebar";
+  {
+    path: "users",
+    component: UserListPage,
+    permissions: [
+      PERMISSIONS.USERS.READ,
+    ],
+    navigation: {
+      label: "Users",
+    },
+  },
 
-export default function AppLayout() {
-  return (
-    <div className="flex h-screen bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
-      {/* Skip navigation */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-gray-900 focus:shadow-lg"
-      >
-        Skip to content
-      </a>
+  {
+    path: "users/:userId",
+    component: UserDetailPage,
+    permissions: [
+      PERMISSIONS.USERS.READ,
+    ],
+  },
 
-      {/* Sidebar */}
-      <Sidebar />
+  {
+    path: "users/new",
+    component: CreateUserPage,
+    permissions: [
+      PERMISSIONS.USERS.CREATE,
+    ],
+  },
 
-      {/* Right Section */}
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <Header />
+  {
+    path: "users/:userId/edit",
+    component: EditUserPage,
+    permissions: [
+      PERMISSIONS.USERS.UPDATE,
+    ],
+  },
 
-        <main
-          id="main-content"
-          tabIndex={-1}
-          className="flex-1 overflow-y-auto bg-gray-100 p-6 dark:bg-gray-950"
-        >
-          <Outlet />
-        </main>
-      </div>
-    </div>
-  );
-}
+  {
+    path: "work-items",
+    component: WorkItemsPage,
+    permissions: [
+      PERMISSIONS.WORK_ITEMS.READ,
+    ],
+    navigation: {
+      label: "Work Items",
+    },
+  },
+
+  {
+    path: "work-items/new",
+    component: CreateWorkItemPage,
+    permissions: [
+      PERMISSIONS.WORK_ITEMS.CREATE,
+    ],
+  },
+
+  {
+    path: "work-items/:id/edit",
+    component: EditWorkItemPage,
+    permissions: [
+      PERMISSIONS.WORK_ITEMS.UPDATE,
+    ],
+  },
+
+  {
+    path: "profile",
+    component: ProfilePage,
+    permissions: [
+      PERMISSIONS.PROFILE.READ,
+      PERMISSIONS.PROFILE.UPDATE,
+    ],
+    navigation: {
+      label: "Profile",
+    },
+  },
+
+  {
+    path: "settings",
+    component: SettingsPage,
+    permissions: [
+      PERMISSIONS.SETTINGS.READ,
+      PERMISSIONS.SETTINGS.UPDATE,
+    ],
+    navigation: {
+      label: "Settings",
+    },
+  },
+];
