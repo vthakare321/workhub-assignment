@@ -34,9 +34,11 @@ function parsePageSize(
 ): PageSize {
   const parsed = Number(value);
 
-  return PAGE_SIZES.find(
-    (pageSize) => pageSize === parsed
-  ) ?? PAGE_SIZES[0];
+  return (
+    PAGE_SIZES.find(
+      (pageSize) => pageSize === parsed
+    ) ?? PAGE_SIZES[0]
+  );
 }
 
 function parseRole(
@@ -46,29 +48,36 @@ function parseRole(
     return "all";
   }
 
-  return USER_ROLES.find(
-    (role) => role === value
-  ) ?? "all";
+  return (
+    USER_ROLES.find(
+      (role) => role === value
+    ) ?? "all"
+  );
 }
 
 function parseSortField(
   value: string | null
 ): UserSortField {
-  return SORT_FIELDS.find(
-    (field) => field === value
-  ) ?? "firstName";
+  return (
+    SORT_FIELDS.find(
+      (field) => field === value
+    ) ?? "firstName"
+  );
 }
 
 function parseSortOrder(
   value: string | null
 ): SortOrder {
-  return SORT_ORDERS.find(
-    (order) => order === value
-  ) ?? "asc";
+  return (
+    SORT_ORDERS.find(
+      (order) => order === value
+    ) ?? "asc"
+  );
 }
 
 export function parseUserListParams(
-  searchParams: URLSearchParams
+  searchParams: URLSearchParams,
+  defaultPageSize: PageSize = PAGE_SIZES[0]
 ): UserListParams {
   return {
     page: parsePositiveInt(
@@ -76,9 +85,11 @@ export function parseUserListParams(
       1
     ),
 
-    pageSize: parsePageSize(
-      searchParams.get("pageSize")
-    ),
+    pageSize: searchParams.has("pageSize")
+      ? parsePageSize(
+          searchParams.get("pageSize")
+        )
+      : defaultPageSize,
 
     q: searchParams.get("q")?.trim() ?? "",
 
