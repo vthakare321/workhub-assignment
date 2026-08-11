@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 
 import { useDashboardUsers } from "./useDashboardUsers";
+
 import { useWorkItems } from "@/features/work-items/hooks/useWorkItems";
 
-
+import { DASHBOARD_API_ROLES } from "../constants/dashboard.constants";
 
 export function useDashboardStats() {
   const {
@@ -29,15 +30,19 @@ export function useDashboardStats() {
       usersData?.total ?? users.length;
 
     const admins = users.filter(
-      (user) => user.role === "admin"
+      (user) =>
+        user.role === DASHBOARD_API_ROLES.ADMIN
     ).length;
 
     const managers = users.filter(
-      (user) => user.role === "moderator"
+      (user) =>
+        user.role === DASHBOARD_API_ROLES.MANAGER
     ).length;
 
     const contributors = users.filter(
-      (user) => user.role === "user"
+      (user) =>
+        user.role ===
+        DASHBOARD_API_ROLES.CONTRIBUTOR
     ).length;
 
     const totalWorkItems =
