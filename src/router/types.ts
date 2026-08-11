@@ -4,6 +4,6 @@ import type { Permission } from "@/config/permissions";
 export interface AppRoute {
   path: string;
   component: LazyExoticComponent<ComponentType>;
-  isProtected?: boolean;
+
   permissions?: Permission[];
 }
