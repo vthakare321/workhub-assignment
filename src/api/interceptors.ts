@@ -4,7 +4,7 @@ import type {
   InternalAxiosRequestConfig,
 } from "axios";
 
-import { ApiError } from "./errors";
+import { normalizeError } from "./errors";
 import {
   clearSession,
   getAccessToken,
@@ -22,8 +22,8 @@ export function onRequest(
   return config;
 }
 
-export function onRequestError(error: AxiosError) {
-  return Promise.reject(error);
+export function onRequestError(error: AxiosError): Promise<never> {
+  return Promise.reject(normalizeError(error));
 }
 
 export function onResponse<T>(
@@ -32,17 +32,12 @@ export function onResponse<T>(
   return response;
 }
 
-export function onResponseError(error: AxiosError) {
-  const status = error.response?.status;
+export function onResponseError(error: AxiosError): Promise<never> {
+  const appError = normalizeError(error);
 
-  const message =
-    (error.response?.data as { message?: string })?.message ??
-    error.message ??
-    "Something went wrong";
-
-  if (status === 401) {
+  if (appError.code === "UNAUTHORIZED") {
     clearSession();
   }
 
-  return Promise.reject(new ApiError(message, status));
+  return Promise.reject(appError);
 }
