@@ -1,43 +1,70 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import {
+  persist,
+  createJSONStorage,
+} from "zustand/middleware";
 
-type Theme = "light" | "dark";
+export type Theme =
+  | "light"
+  | "dark"
+  | "system";
+
+export type PageSize =
+  | 10
+  | 20
+  | 30;
 
 interface PreferencesState {
   theme: Theme;
   sidebarCollapsed: boolean;
-  defaultPageSize: number;
+  defaultPageSize: PageSize;
 
   setTheme: (theme: Theme) => void;
   toggleSidebar: () => void;
-  setDefaultPageSize: (size: number) => void;
+  setSidebarCollapsed: (
+    collapsed: boolean
+  ) => void;
+  setDefaultPageSize: (
+    size: PageSize
+  ) => void;
 }
 
-export const usePreferencesStore = create<PreferencesState>()(
-  persist(
-    (set) => ({
-      theme: "light",
-      sidebarCollapsed: false,
-      defaultPageSize: 10,
+export const usePreferencesStore =
+  create<PreferencesState>()(
+    persist(
+      (set) => ({
+        theme: "system",
+        sidebarCollapsed: false,
+        defaultPageSize: 10,
 
-      setTheme: (theme) =>
-        set({
-          theme,
-        }),
+        setTheme: (theme) =>
+          set({
+            theme,
+          }),
 
-      toggleSidebar: () =>
-        set((state) => ({
-          sidebarCollapsed: !state.sidebarCollapsed,
-        })),
+        toggleSidebar: () =>
+          set((state) => ({
+            sidebarCollapsed:
+              !state.sidebarCollapsed,
+          })),
 
-      setDefaultPageSize: (size) =>
-        set({
-          defaultPageSize: size,
-        }),
-    }),
-    {
-      name: "preferences-storage",
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
+        setSidebarCollapsed: (
+          collapsed
+        ) =>
+          set({
+            sidebarCollapsed: collapsed,
+          }),
+
+        setDefaultPageSize: (size) =>
+          set({
+            defaultPageSize: size,
+          }),
+      }),
+      {
+        name: "workhub-preferences",
+        storage: createJSONStorage(
+          () => localStorage
+        ),
+      }
+    )
+  );

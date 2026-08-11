@@ -88,3 +88,15 @@ export const usersApi = {
     );
   },
 };
+
+getAllUsers() {
+  return apiClient.get<UsersListResponseDto>(
+    ENDPOINTS.USERS.LIST,
+    {
+      params: {
+        limit: 0,
+        skip: 0,
+      },
+    }
+  );
+},
