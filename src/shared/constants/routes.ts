@@ -1,33 +1,29 @@
 export const ROUTES = {
-  ROOT: "/",
-
   LOGIN: "/login",
 
-  APP: "/app",
+  DASHBOARD: "/dashboard",
 
-  DASHBOARD: "/app/dashboard",
+  USERS: "/users",
 
-  USERS: "/app/users",
+  USER_DETAIL: "/users/:userId",
 
-  USER_DETAIL: "/app/users/:userId",
+  CREATE_USER: "/users/create",
 
-  CREATE_USER: "/app/users/new",
+  EDIT_USER: "/users/:userId/edit",
 
-  EDIT_USER: "/app/users/:userId/edit",
+  WORK_ITEMS: "/work-items",
 
-  WORK_ITEMS: "/app/work-items",
+  CREATE_WORK_ITEM: "/work-items/create",
 
-  CREATE_WORK_ITEM: "/app/work-items/new",
+  WORK_ITEM_DETAIL: "/work-items/:id",
 
-  WORK_ITEM_DETAIL: "/app/work-items/:id",
+  EDIT_WORK_ITEM: "/work-items/:id/edit",
 
-  EDIT_WORK_ITEM: "/app/work-items/:id/edit",
+  PROFILE: "/profile",
 
-  PROFILE: "/app/profile",
+  SETTINGS: "/settings",
 
-  SETTINGS: "/app/settings",
-
-  FORBIDDEN: "/forbidden",
+  FORBIDDEN: "/403",
 
   NOT_FOUND: "*",
 } as const;
