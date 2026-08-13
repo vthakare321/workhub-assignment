@@ -40,17 +40,7 @@ export const usersService = {
   };
 },
 
- async getAllUsers() {
-    const { data } =
-      await usersApi.getAllUsers();
 
-    return {
-      users: data.users.map(toUser),
-      total: data.total,
-      skip: data.skip,
-      limit: data.limit,
-    };
-  },
 
 
 

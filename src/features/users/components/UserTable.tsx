@@ -42,6 +42,14 @@ const columns: DataTableColumn<User>[] = [
     title: "Email",
   },
   {
+    key: "phone",
+    title: "Phone",
+    render:(user)=>(
+     <span className="whitespace-nowrap">{user.phone}</span>
+    )
+
+  },
+  {
     key: "age",
     title: "Age",
   },

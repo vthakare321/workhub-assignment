@@ -46,10 +46,10 @@ export const protectedRoutes: AppRoute[] = [
   },
 
   {
-  path: "users/create",
-  component: CreateUserPage,
-  permissions: [PERMISSIONS.USERS.CREATE],
-},
+    path: "users/new",
+    component: CreateUserPage,
+    permissions: [PERMISSIONS.USERS.CREATE],
+  },
 
   {
     path: "users/:userId/edit",

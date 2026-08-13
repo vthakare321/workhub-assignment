@@ -22,19 +22,7 @@ export default function LoginPage() {
           isLoading={isPending}
         />
 
-        <div className="mt-8 rounded-md bg-gray-50 p-4 text-sm">
-          <h2 className="font-semibold text-gray-700">
-            Demo Credentials
-          </h2>
-
-          <p className="mt-2">
-            <strong>Username:</strong> emilys
-          </p>
-
-          <p>
-            <strong>Password:</strong> emilyspass
-          </p>
-        </div>
+        
       </div>
     </div>
   );

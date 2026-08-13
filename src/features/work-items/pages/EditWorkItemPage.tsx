@@ -79,18 +79,7 @@ export default function EditWorkItemPage() {
     return <Loader />;
   }
 
-  if (
-  currentUser?.role === ROLES.CONTRIBUTOR &&
-  workItem &&
-  workItem.userId !== currentUser.id
-) {
-  return (
-    <Navigate
-      to={ROUTES.FORBIDDEN}
-      replace
-    />
-  );
-}
+ 
 
   if (
     isWorkItemError ||

@@ -12,12 +12,14 @@ export const userFormSchema = z.object({
   firstName: z
     .string()
     .trim()
-    .min(1, "First name is required"),
+    .min(2, "First name is required")
+    .max(50, "name not exceed 50 caracter"),
 
   lastName: z
     .string()
     .trim()
-    .min(1, "Last name is required"),
+    .min(2, "Last name is required")
+    .max(50, "lastname not exceed 50 caracter"),
 
   email: z
     .string()
@@ -28,15 +30,16 @@ export const userFormSchema = z.object({
   phone: z
     .string()
     .trim()
-    .min(1, "Phone number is required"),
+    .min(7, "Phone number is required")
+    .max(20, "Phone number must not exceed 20 character"),
 
   age: z
     .number({
       message: "Age is required",
     })
     .int("Age must be a whole number")
-    .min(1, "Age must be at least 1")
-    .max(120, "Age must be less than or equal to 120"),
+    .min(18, "Age must be at least 18")
+    .max(75, "Age must be less than or equal to 75"),
 
   role: z.enum(USER_ROLES, {
     message: "Role is required",
@@ -45,7 +48,8 @@ export const userFormSchema = z.object({
   department: z
     .string()
     .trim()
-    .min(1, "Department is required"),
+    .min(1, "Department is required")
+    .max(60, "Department must not exceed 60 character")
 });
 
 export type UserFormValues = z.infer<

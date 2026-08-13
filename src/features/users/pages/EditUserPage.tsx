@@ -9,7 +9,7 @@ import {
 
 import { ROUTES } from "@/shared/constants/routes";
 
-import { UserForm } from "../components/UserForm";
+import { UserForm } from "../components/UserForm"
 import { useUser } from "../hooks/useUser";
 import { useUpdateUser } from "../hooks/useUpdateUser";
 
@@ -17,8 +17,7 @@ import type { UserFormValues } from "../schemas/user-form.schema";
 
 export default function EditUserPage() {
   const { userId: userIdParam } = useParams();
-
-const userId = Number(userIdParam);
+  const userId = Number(userIdParam);
 
   const navigate = useNavigate();
 
@@ -57,14 +56,15 @@ const userId = Number(userIdParam);
     );
   };
 
- const handleBack = () => {
-  navigate(
-    ROUTES.USER_DETAIL.replace(
-      ":userId",
-      String(userId)
-    )
-  );
-};
+  const handleBack = () => {
+    navigate(
+      ROUTES.USER_DETAIL.replace(
+        ":userId",
+        String(userId)
+      )
+    );
+  };
+
   if (isLoading) {
     return <Loader size="lg" />;
   }

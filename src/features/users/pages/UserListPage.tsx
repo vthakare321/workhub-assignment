@@ -19,11 +19,15 @@ import type { UserListParams } from "../types/user-list-params";
 import { parseUserListParams } from "../utils/parse-user-list-params";
 import { ROUTES } from "@/shared/constants/routes";
 
+import { usePreferencesStore } from "@/stores/preferences.store";
+
 export default function UserListPage() {
   const [searchParams, setSearchParams] =
     useSearchParams();
 
-  const params = parseUserListParams(searchParams);
+    const defaultPageSize = usePreferencesStore((state)=>state.defaultPageSize)
+
+  const params = parseUserListParams(searchParams, defaultPageSize);
 
   const currentUser = useAuthStore(
     (state) => state.user
@@ -144,21 +148,22 @@ export default function UserListPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Users"
-        description="Manage and view application users."
-        rightContent={
-          currentUser?.role === "admin" ? (
-            <Link to={ROUTES.CREATE_USER}>
-              <Button>
-                Create User
-              </Button>
-            </Link>
-          ) : null
-        }
-      />
+  <div className="space-y-4 sm:space-y-6">
+    <PageHeader
+      title="Users"
+      description="Manage and view application users."
+      rightContent={
+        currentUser?.role === "admin" ? (
+          <Link to={ROUTES.CREATE_USER}>
+            <Button className="w-full sm:w-auto">
+              Create User
+            </Button>
+          </Link>
+        ) : null
+      }
+    />
 
+    <div className="overflow-x-auto">
       <UserFilters
         searchValue={searchValue}
         role={params.role}
@@ -179,37 +184,42 @@ export default function UserListPage() {
           updateParams({ pageSize: value })
         }
       />
+    </div>
 
-      <p className="text-sm text-gray-500">
-        Total users: {data.total}
-      </p>
+    <p className="text-sm text-gray-500">
+      Total users: {data.total}
+    </p>
 
-      {data.users.length === 0 ? (
-        <EmptyState
-          title={
-            hasFilters
-              ? "No matching users found"
-              : "No users found"
-          }
-          description={
-            hasFilters
-              ? "Try changing your search or filter criteria."
-              : "There are no users available."
-          }
-        />
-      ) : (
-        <>
+    {data.users.length === 0 ? (
+      <EmptyState
+        title={
+          hasFilters
+            ? "No matching users found"
+            : "No users found"
+        }
+        description={
+          hasFilters
+            ? "Try changing your search or filter criteria."
+            : "There are no users available."
+        }
+      />
+    ) : (
+      <>
+        <div className="overflow-x-auto">
           <UserTable users={data.users} />
+        </div>
 
-          {totalPages > 1 && (
+        {totalPages > 1 && (
+          <div className="flex justify-center">
             <Pagination
               currentPage={params.page}
               totalPages={totalPages}
               onPageChange={handlePageChange}
             />
-          )}
-        </>
-      )}
-    </div>
-  );
+          </div>
+        )}
+      </>
+    )}
+  </div>
+);
 }

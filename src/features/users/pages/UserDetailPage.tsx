@@ -19,8 +19,7 @@ const ROLE_LABELS = {
 
 export default function UserDetailPage() {
  const { userId: userIdParam } = useParams();
-
-const userId = Number(userIdParam);
+  const userId = Number(userIdParam);
 
   const navigate = useNavigate();
 

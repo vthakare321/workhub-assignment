@@ -79,15 +79,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
 
-      <div className="rounded-lg border border-gray-200 bg-white p-6 text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
-  <h2 className="text-lg font-semibold">
-    Theme Test
-  </h2>
-
-  <p className="mt-1">
-    If Dark is selected, this box should become dark.
-  </p>
-</div>
+      
       <div>
         <h1 className="text-2xl font-semibold">
           Settings
@@ -97,9 +89,7 @@ export default function SettingsPage() {
           Manage your application preferences.
         </p>
 
-          <div className="rounded-lg bg-white p-4 text-black dark:bg-gray-900 dark:text-white">
-            Theme is working
-         </div>
+          
       </div>
 
       <div className="max-w-2xl space-y-6">
