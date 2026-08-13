@@ -18,12 +18,13 @@ export interface AppError {
   cause?: unknown;
 }
 
-interface ApiErrorResponse {
-  message?: unknown;
-  error?: unknown;
-  errors?: unknown;
-  fieldErrors?: unknown;
-}
+// interface ApiErrorResponse {
+//   message?: unknown;
+//   error?: unknown;
+//   errors?: unknown;
+//   fieldErrors?: unknown;
+// }
+
 
 const DEFAULT_MESSAGES: Record<AppErrorCode, string> = {
   UNAUTHORIZED: "Your session has expired. Please sign in again.",
@@ -83,19 +84,37 @@ function getErrorCode(status?: number): AppErrorCode {
   }
 }
 
-function getResponseMessage(data: unknown): string | undefined {
+// function getResponseMessage(data: unknown): string | undefined {
+//   if (!isRecord(data)) {
+//     return undefined;
+//   }
+
+//   const response = data as ApiErrorResponse;
+
+//   if (typeof response.message === "string") {
+//     return response.message;
+//   }
+
+//   if (typeof response.error === "string") {
+//     return response.error;
+//   }
+
+//   return undefined;
+// }
+
+function getResponseMessage(
+  data: unknown
+): string | undefined {
   if (!isRecord(data)) {
     return undefined;
   }
 
-  const response = data as ApiErrorResponse;
-
-  if (typeof response.message === "string") {
-    return response.message;
+  if (typeof data.message === "string") {
+    return data.message;
   }
 
-  if (typeof response.error === "string") {
-    return response.error;
+  if (typeof data.error === "string") {
+    return data.error;
   }
 
   return undefined;
